@@ -54,7 +54,7 @@ public class StoreManager : MonoBehaviour
 
         if(PlayerPrefs.HasKey("Diamonds") && PlayerPrefs.HasKey("Rubys") && UIManager != null)
         {
-            UIManager.UpdateGems(PlayerPrefs.GetInt("Diamonds"), PlayerPrefs.GetInt("Rubys"));
+            UIManager.UpdateGems(PlayerPrefs.GetInt("Diamonds"), PlayerPrefs.GetInt("Rubys")); //TODO: implement bf for score
         }
         else
         {
@@ -71,9 +71,6 @@ public class StoreManager : MonoBehaviour
     {
         if (CheckStore(storeID))
         {
-            // while (storeContent.childCount > 0) {
-            //     DestroyImmediate(storeContent.GetChild(0).gameObject);
-            // }
             foreach(var l in odin)
             {
                 foreach(var s in l)
@@ -146,7 +143,7 @@ public class StoreManager : MonoBehaviour
                             GameObject skin = Instantiate(baseItem) as GameObject;
                             skin.transform.SetParent(storeContent, false);
                             Text price = skin.GetComponentInChildren<Text>();
-                            price.text = item.price.ToString();
+                            price.text = database.CheckItemBought(item.id, database.smith);
                             skin.GetComponentInChildren<Image>().sprite = Resources.Load<Sprite>("Sprites/Steve/Equips/"+ item.nameItem);
                             skin.GetComponentInChildren<Button>().onClick.AddListener(() => BuyItem(item.id, item.nameItem));
                             smithList.Add(skin);                       
@@ -251,6 +248,17 @@ public class StoreManager : MonoBehaviour
                 print(itemName + ": " + database.potions[id].quantity.ToString());
                 UIManager.UpdatePotions(database.potions[0].quantity,database.potions[1].quantity);
                 break;
+            
+            case StoreOpen.ARMOR:
+                if(database.smith[id].haveIt){
+                    EquipItem(id);
+                }
+                else
+                {
+                    database.smith[id].haveIt = true;
+                    UIManager.UpdateTextButtons("Click to use", smithList[id]);
+                }
+                break;
 
             default:
                 Debug.Log("No store open");
@@ -260,7 +268,6 @@ public class StoreManager : MonoBehaviour
 
     public void EquipItem(int id)
     {
-        string prevEquip = "";
         switch(storeOpen)
         {
             case StoreOpen.SKIN:
@@ -272,17 +279,24 @@ public class StoreManager : MonoBehaviour
                 }
                 database.skins[id].isEquiped = true;
                 UIManager.UpdateTextButtons("Using", skinsList[id]);
-                UIManager.UpdateInventory(database.skins[id].nameItem, "");
-                PlayerPrefs.SetString("UsedSkin", database.skins[id].nameItem);
+                PlayerPrefs.SetString("UsedSkin", database.skins[id].nameItem); //TODO: fix this
                 break;
             case StoreOpen.ARMOR:
-                Debug.Log("Not Implemented");
+                foreach(var s in database.smith){
+                    if(s.isEquiped){
+                        s.isEquiped = false;
+                        UIManager.UpdateTextButtons("Click to use", smithList[s.id]);
+                    }
+                }
+                database.smith[id].isEquiped = true;
+                UIManager.UpdateTextButtons("Using", smithList[id]);
                 break;
             default:
                 Debug.Log("Not Implemented");
                 break;
 
         }
+        UIManager.UpdateInventory(database.CheckUsedSkin(), database.CheckUsedArmor());
     }
 
     public void ReturnToMainMenu()
