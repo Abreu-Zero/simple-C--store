@@ -47,9 +47,9 @@ using UnityEngine.UI;
 
 [System.Serializable] public class DatabaseItems
 {
-    public List<ItemModel> dataSkins;
-    public List<ItemModel> dataPotions;
-    public List<ItemModel> dataSmith;
+    public List<EquipModel> dataSkins;
+    public List<PotionModel> dataPotions;
+    public List<EquipModel> dataSmith;
     public List<ItemModel> dataBank;
 }
 
