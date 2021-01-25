@@ -8,7 +8,9 @@ using System.Runtime.Serialization.Formatters.Binary;
 public class DatabaseStore : MonoBehaviour
 {
 
-    public List<ItemModel> skins, potions, smith, bank;
+    public List<ItemModel> bank;
+    public List<EquipModel> skins, smith;
+    public List<PotionModel> potions;
 
     void OnEnable()
     {
@@ -20,29 +22,29 @@ public class DatabaseStore : MonoBehaviour
 
     private void PopulateStore()
     {
-        ItemModel skin = new ItemModel(0, 0, "SteveRed"); //TODO: implement full serializable items
+        EquipModel skin = new EquipModel(0, 0, "SteveRed", true, true); //TODO: implement full serializable items
         skins.Add(skin);
-        skin = new ItemModel(1, 0, "SteveAlemanha");
+        skin = new EquipModel(1, 0, "SteveAlemanha", false, false);
         skins.Add(skin);
-        skin = new ItemModel(2, 0, "SteveBrasil");
+        skin = new EquipModel(2, 0, "SteveBrasil", false, false);
         skins.Add(skin);
-        skin = new ItemModel(3, 0, "SteveItalia");
+        skin = new EquipModel(3, 0, "SteveItalia", false, false);
         skins.Add(skin);
-        skin = new ItemModel(4, 0, "SteveUK");
+        skin = new EquipModel(4, 0, "SteveUK", false, false);
         skins.Add(skin);
-        skin = new ItemModel(5, 0, "SteveUSA");
+        skin = new EquipModel(5, 0, "SteveUSA", false, false);
         skins.Add(skin);
-        ItemModel potion = new ItemModel(6, 0, "PotGreen");
+        PotionModel potion = new PotionModel(0, 0, "PotGreen", 0);
         potions.Add(potion);
-        potion = new ItemModel(7, 0, "PotRed");
+        potion = new PotionModel(1, 0, "PotRed", 0);
         potions.Add(potion);
-        ItemModel armor = new ItemModel (8, 0, "SteveKlappvisor");
+        EquipModel armor = new EquipModel (0, 0, "SteveKlappvisor", false, false);
         smith.Add(armor);
-        armor = new ItemModel (9, 0, "StevePigface");
+        armor = new EquipModel (1, 0, "StevePigface", false, false);
         smith.Add(armor);
-        ItemModel coin = new ItemModel(10, 0, "item (3)");
+        ItemModel coin = new ItemModel(0, 0, "item (3)");
         bank.Add(coin);
-        coin = new ItemModel(11, 0, "chest");
+        coin = new ItemModel(1, 0, "chest");
         bank.Add(coin);
     }
 
@@ -102,5 +104,17 @@ public class DatabaseStore : MonoBehaviour
         }
 
         return false;
+    }
+
+    public void DeleteData()
+    {
+        try
+        {
+            File.Delete(Application.persistentDataPath + "storeData.data");
+        }
+        catch (Exception ex)
+        {
+            Debug.LogException(ex);
+        }
     }
 }
