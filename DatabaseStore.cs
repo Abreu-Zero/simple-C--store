@@ -48,11 +48,11 @@ public class DatabaseStore : MonoBehaviour
         bank.Add(coin);
     }
 
-    public string CheckItemBought(string itemName, int price) 
+    public string CheckItemBought(int id, List<EquipModel> list) 
     {
-        if(PlayerPrefs.HasKey(itemName))
+        if(list[id].haveIt)
         {
-            if(CkeckItemEquiped(itemName))
+            if(list[id].isEquiped)
             {
                 return "Using";
             }else
@@ -61,13 +61,26 @@ public class DatabaseStore : MonoBehaviour
             }
         }else
         {
-            return price.ToString();
+            return list[id].price.ToString();
         }
     }
 
-    private bool CkeckItemEquiped(string itemName)
+    public string CheckUsedSkin()
     {
-        return PlayerPrefs.GetInt(itemName) == 1;
+        foreach(var s in skins)
+        {
+            if (s.isEquiped){return s.nameItem;}
+        }
+        return "SteveRed";
+    }
+
+    public string CheckUsedArmor()
+    {
+        foreach(var s in smith)
+        {
+            if (s.isEquiped){return s.nameItem;}
+        }
+        return "";
     }
 
     public void SaveData()

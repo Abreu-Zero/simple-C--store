@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -55,19 +55,16 @@ public class StoreManager : MonoBehaviour
         if(PlayerPrefs.HasKey("Diamonds") && PlayerPrefs.HasKey("Rubys") && UIManager != null)
         {
             UIManager.UpdateGems(PlayerPrefs.GetInt("Diamonds"), PlayerPrefs.GetInt("Rubys"));
-            UIManager.UpdatePotions(PlayerPrefs.GetInt("PotGreen"), PlayerPrefs.GetInt("PotRed"));
         }
         else
         {
             PlayerPrefs.SetInt("Diamonds", 0);
             PlayerPrefs.SetInt("Rubys", 0);
-            PlayerPrefs.SetInt("PotGreen", 0);
-            PlayerPrefs.SetInt("PotRed", 0);
-            UIManager.UpdateGems(0, 0);
             UIManager.UpdatePotions(0, 0);
         }
         ChangeStore(0);
         UIManager.UpdateInventory(GetUsedSkin(), GetUsedArmor());
+        UIManager.UpdatePotions(database.potions[0].quantity, database.potions[1].quantity);
     }
 
     public void ChangeStore(int storeID)
@@ -98,7 +95,7 @@ public class StoreManager : MonoBehaviour
                             GameObject skin = Instantiate(baseItem) as GameObject;
                             skin.transform.SetParent(storeContent, false);
                             Text price = skin.GetComponentInChildren<Text>();
-                            price.text = database.CheckItemBought(item.nameItem, item.price);
+                            price.text = database.CheckItemBought(item.id, database.skins);
                             skin.GetComponentInChildren<Image>().sprite = Resources.Load<Sprite>("Sprites/Steve/Skins/"+ item.nameItem);
                             skin.GetComponentInChildren<Button>().onClick.AddListener(() => BuyItem(item.id, item.nameItem));
                             skinsList.Add(skin);
@@ -217,24 +214,12 @@ public class StoreManager : MonoBehaviour
 
     private string GetUsedSkin()
     {
-        foreach(var s in database.skins)
-        {
-            if(PlayerPrefs.GetInt(s.nameItem) == 1)
-                {return s.nameItem;}
-        }
-
-        return "SteveRed";
+        return database.CheckUsedSkin();
     }
 
     private string GetUsedArmor()
     {
-        foreach(var s in database.smith)
-        {
-            if(PlayerPrefs.GetInt(s.nameItem) == 1)
-                {return s.nameItem;}
-        }
-
-        return "";
+        return database.CheckUsedArmor();
     }
 
 
@@ -244,58 +229,57 @@ public class StoreManager : MonoBehaviour
         switch(storeOpen)
         {
             case StoreOpen.SKIN:
-                if(PlayerPrefs.HasKey(itemName)){
-                    EquipItem(id, itemName);
+                if(database.skins[id].haveIt){
+                    EquipItem(id);
                 }
                 else
                 {
-                    PlayerPrefs.SetInt(itemName, 0);
+                    database.skins[id].haveIt = true;
                     UIManager.UpdateTextButtons("Click to use", skinsList[id]);
                 }
                 break;
 
             case StoreOpen.POTION:
-                if(PlayerPrefs.HasKey(itemName))
+                if(database.potions[id] != null)
                 {
-                    PlayerPrefs.SetInt(itemName, PlayerPrefs.GetInt(itemName) + 1);
+                    database.potions[id].quantity += 1;
                 }
                 else
                 {
-                    PlayerPrefs.SetInt(itemName, 0);
+                    Debug.Log("Error while updating potions");
                 }
-                print(itemName + ": " + PlayerPrefs.GetInt(itemName));
-                UIManager.UpdatePotions(PlayerPrefs.GetInt("PotGreen"), PlayerPrefs.GetInt("PotRed"));
+                print(itemName + ": " + database.potions[id].quantity.ToString());
+                UIManager.UpdatePotions(database.potions[0].quantity,database.potions[1].quantity);
                 break;
 
             default:
-                print("NO STORE OPEN");
+                Debug.Log("No store open");
                 break;
             }
     }
 
-    public void EquipItem(int id, string itemName)
+    public void EquipItem(int id)
     {
         string prevEquip = "";
         switch(storeOpen)
         {
             case StoreOpen.SKIN:
                 foreach(var s in database.skins){
-                    if(PlayerPrefs.GetInt(s.nameItem) == 1){
-                        PlayerPrefs.SetInt(s.nameItem, 0);
-                        prevEquip = s.nameItem;
+                    if(s.isEquiped){
+                        s.isEquiped = false;
                         UIManager.UpdateTextButtons("Click to use", skinsList[s.id]);
                     }
                 }
-                PlayerPrefs.SetInt(itemName, 1);
-                print("Unnequiped: " + prevEquip + " Equiped: " + itemName);
+                database.skins[id].isEquiped = true;
                 UIManager.UpdateTextButtons("Using", skinsList[id]);
-                UIManager.UpdateInventory(itemName, "");
-                PlayerPrefs.SetString("UsedSkin", itemName);
+                UIManager.UpdateInventory(database.skins[id].nameItem, "");
+                PlayerPrefs.SetString("UsedSkin", database.skins[id].nameItem);
                 break;
-            case StoreOpen.POTION:
-
+            case StoreOpen.ARMOR:
+                Debug.Log("Not Implemented");
+                break;
             default:
-                print("Not implemented");
+                Debug.Log("Not Implemented");
                 break;
 
         }
