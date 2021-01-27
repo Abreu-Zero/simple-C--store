@@ -11,12 +11,20 @@ public class DatabaseStore : MonoBehaviour
     public List<ItemModel> bank;
     public List<EquipModel> skins, smith;
     public List<PotionModel> potions;
+    public int diamonds, rubys;
 
     void OnEnable()
     {
+        DeleteData();
         if(!LoadData())
         {
             PopulateStore();
+        }
+
+        if(!LoadScore())
+        {
+            diamonds = 0;
+            rubys = 0;
         }
     }
 
@@ -24,15 +32,15 @@ public class DatabaseStore : MonoBehaviour
     {
         EquipModel skin = new EquipModel(0, 0, "SteveRed", true, true); //TODO: implement full serializable items
         skins.Add(skin);
-        skin = new EquipModel(1, 0, "SteveAlemanha", false, false);
+        skin = new EquipModel(1, 200, "SteveAlemanha", false, false);
         skins.Add(skin);
-        skin = new EquipModel(2, 0, "SteveBrasil", false, false);
+        skin = new EquipModel(2, 300, "SteveBrasil", false, false);
         skins.Add(skin);
-        skin = new EquipModel(3, 0, "SteveItalia", false, false);
+        skin = new EquipModel(3, 400, "SteveItalia", false, false);
         skins.Add(skin);
-        skin = new EquipModel(4, 0, "SteveUK", false, false);
+        skin = new EquipModel(4, 500, "SteveUK", false, false);
         skins.Add(skin);
-        skin = new EquipModel(5, 0, "SteveUSA", false, false);
+        skin = new EquipModel(5, 600, "SteveUSA", false, false);
         skins.Add(skin);
         PotionModel potion = new PotionModel(0, 0, "PotGreen", 0);
         potions.Add(potion);
@@ -42,7 +50,7 @@ public class DatabaseStore : MonoBehaviour
         smith.Add(armor);
         armor = new EquipModel (1, 0, "StevePigface", false, false);
         smith.Add(armor);
-        ItemModel coin = new ItemModel(0, 0, "item (3)");
+        ItemModel coin = new ItemModel(0, 0, "item (3)"); //TODO: set new sprites for bank items  
         bank.Add(coin);
         coin = new ItemModel(1, 0, "chest");
         bank.Add(coin);
@@ -96,6 +104,13 @@ public class DatabaseStore : MonoBehaviour
 
         bFormatter.Serialize(fStream, data);
         fStream.Close();
+
+        fStream = File.Create(Application.persistentDataPath + "scoreData.data");
+        DataGems data2 = new DataGems();
+        data2.diamonds = diamonds;
+        data2.rubys = rubys;
+        bFormatter.Serialize(fStream, data2);
+        fStream.Close();
     }
 
     public bool LoadData()
@@ -114,6 +129,25 @@ public class DatabaseStore : MonoBehaviour
             fStream.Close();
 
             if(skins != null && bank != null){return true;}
+        }
+
+        return false;
+    }
+
+    public bool LoadScore()
+    {
+        if(File.Exists(Application.persistentDataPath + "scoreData.data"))
+        {
+            BinaryFormatter bFormatter = new BinaryFormatter();
+            FileStream fStream = File.Open(Application.persistentDataPath + "scoreData.data", FileMode.Open);
+
+            DataGems data = (DataGems) bFormatter.Deserialize(fStream);
+            diamonds = data.diamonds;
+            rubys = data.rubys;
+
+            fStream.Close();
+
+            return true;
         }
 
         return false;

@@ -51,20 +51,19 @@ public class StoreManager : MonoBehaviour
         odin.Add(bankList);
         UIManager = GetComponent<UIStoreManager>();
         database = GetComponent<DatabaseStore>();
-
-        if(PlayerPrefs.HasKey("Diamonds") && PlayerPrefs.HasKey("Rubys") && UIManager != null)
-        {
-            UIManager.UpdateGems(PlayerPrefs.GetInt("Diamonds"), PlayerPrefs.GetInt("Rubys")); //TODO: implement bf for score
-        }
-        else
-        {
-            PlayerPrefs.SetInt("Diamonds", 0);
-            PlayerPrefs.SetInt("Rubys", 0);
-            UIManager.UpdatePotions(0, 0);
-        }
         ChangeStore(0);
         UIManager.UpdateInventory(GetUsedSkin(), GetUsedArmor());
         UIManager.UpdatePotions(database.potions[0].quantity, database.potions[1].quantity);
+        UIManager.UpdateGems(database.diamonds, database.rubys);
+    }
+
+    void Update(){
+        if(Input.GetKeyDown(KeyCode.Space)) //FOR TESTING ONLY
+        {
+            database.diamonds += 100;
+            database.rubys += 100;
+            UIManager.UpdateGems(database.diamonds, database.rubys);
+        }
     }
 
     public void ChangeStore(int storeID)
@@ -231,8 +230,13 @@ public class StoreManager : MonoBehaviour
                 }
                 else
                 {
-                    database.skins[id].haveIt = true;
-                    UIManager.UpdateTextButtons("Click to use", skinsList[id]);
+                    if(database.diamonds - database.skins[id].price >= 0)
+                    {
+                        database.diamonds -= database.skins[id].price;
+                        database.skins[id].haveIt = true;
+                        UIManager.UpdateTextButtons("Click to use", skinsList[id]);
+                    }
+                    
                 }
                 break;
 
@@ -264,6 +268,7 @@ public class StoreManager : MonoBehaviour
                 Debug.Log("No store open");
                 break;
             }
+            UIManager.UpdateGems(database.diamonds, database.rubys);
     }
 
     public void EquipItem(int id)
