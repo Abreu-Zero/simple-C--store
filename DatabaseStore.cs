@@ -15,7 +15,7 @@ public class DatabaseStore : MonoBehaviour
 
     void OnEnable()
     {
-        DeleteData();
+        //DeleteData();
         if(!LoadData())
         {
             PopulateStore();
@@ -30,7 +30,7 @@ public class DatabaseStore : MonoBehaviour
 
     private void PopulateStore()
     {
-        EquipModel skin = new EquipModel(0, 0, "SteveRed", true, true); //TODO: implement full serializable items
+        EquipModel skin = new EquipModel(0, 0, "SteveRed", true, true);
         skins.Add(skin);
         skin = new EquipModel(1, 200, "SteveAlemanha", false, false);
         skins.Add(skin);
@@ -42,13 +42,13 @@ public class DatabaseStore : MonoBehaviour
         skins.Add(skin);
         skin = new EquipModel(5, 600, "SteveUSA", false, false);
         skins.Add(skin);
-        PotionModel potion = new PotionModel(0, 0, "PotGreen", 0);
+        PotionModel potion = new PotionModel(0, 25, "PotGreen", 0);
         potions.Add(potion);
-        potion = new PotionModel(1, 0, "PotRed", 0);
+        potion = new PotionModel(1, 50, "PotRed", 0);
         potions.Add(potion);
-        EquipModel armor = new EquipModel (0, 0, "SteveKlappvisor", false, false);
+        EquipModel armor = new EquipModel (0, 500, "SteveKlappvisor", false, false);
         smith.Add(armor);
-        armor = new EquipModel (1, 0, "StevePigface", false, false);
+        armor = new EquipModel (1, 500, "StevePigface", false, false);
         smith.Add(armor);
         ItemModel coin = new ItemModel(0, 0, "item (3)"); //TODO: set new sprites for bank items  
         bank.Add(coin);
@@ -113,7 +113,7 @@ public class DatabaseStore : MonoBehaviour
         fStream.Close();
     }
 
-    public bool LoadData()
+    private bool LoadData()
     {
         if(File.Exists(Application.persistentDataPath + "storeData.data"))
         {
@@ -134,7 +134,7 @@ public class DatabaseStore : MonoBehaviour
         return false;
     }
 
-    public bool LoadScore()
+    private bool LoadScore()
     {
         if(File.Exists(Application.persistentDataPath + "scoreData.data"))
         {

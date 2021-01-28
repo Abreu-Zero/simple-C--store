@@ -64,6 +64,10 @@ public class StoreManager : MonoBehaviour
             database.rubys += 100;
             UIManager.UpdateGems(database.diamonds, database.rubys);
         }
+        if(Input.GetKeyDown(KeyCode.D))
+        {
+            database.DeleteData();
+        }
     }
 
     public void ChangeStore(int storeID)
@@ -235,6 +239,8 @@ public class StoreManager : MonoBehaviour
                         database.diamonds -= database.skins[id].price;
                         database.skins[id].haveIt = true;
                         UIManager.UpdateTextButtons("Click to use", skinsList[id]);
+                    }else{
+                        print("ERROR: Not enough diamonds - " + database.diamonds + " diamonds x " + database.skins[id].price.ToString() + " cost");
                     }
                     
                 }
@@ -243,7 +249,15 @@ public class StoreManager : MonoBehaviour
             case StoreOpen.POTION:
                 if(database.potions[id] != null)
                 {
-                    database.potions[id].quantity += 1;
+                    if(database.diamonds - database.potions[id].price >= 0)
+                    {
+                        database.diamonds -= database.potions[id].price;
+                        database.potions[id].quantity += 1;
+                    }else
+                    {
+                        print("ERROR: Not enough diamonds - " + database.diamonds + " diamonds x " + database.potions[id].price.ToString() + " cost");
+                    }
+                    
                 }
                 else
                 {
@@ -259,8 +273,14 @@ public class StoreManager : MonoBehaviour
                 }
                 else
                 {
-                    database.smith[id].haveIt = true;
-                    UIManager.UpdateTextButtons("Click to use", smithList[id]);
+                    if(database.diamonds - database.smith[id].price >= 0)
+                    {
+                        database.diamonds -= database.smith[id].price;
+                        database.smith[id].haveIt = true;
+                        UIManager.UpdateTextButtons("Click to use", smithList[id]);
+                    }else{
+                        print("ERROR: Not enough diamonds - " + database.diamonds + " diamonds x " + database.smith[id].price.ToString() + " cost");
+                    }
                 }
                 break;
 
