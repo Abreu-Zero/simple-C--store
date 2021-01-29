@@ -13,6 +13,7 @@ public class StoreManager : MonoBehaviour
     private StoreOpen storeOpen;
     private UIStoreManager UIManager;
     private DatabaseStore database;
+    private BankAPI bankAPI;
     private List<GameObject> skinsList, potionsList, smithList, bankList;
     private List<List<GameObject>> odin;
     
@@ -51,6 +52,7 @@ public class StoreManager : MonoBehaviour
         odin.Add(bankList);
         UIManager = GetComponent<UIStoreManager>();
         database = GetComponent<DatabaseStore>();
+        bankAPI = GetComponent<BankAPI>();
         ChangeStore(0);
         UIManager.UpdateInventory(GetUsedSkin(), GetUsedArmor());
         UIManager.UpdatePotions(database.potions[0].quantity, database.potions[1].quantity);
@@ -225,7 +227,7 @@ public class StoreManager : MonoBehaviour
 
     public void BuyItem(int id, string itemName)
     {
-        print("ID: " + id + " Item Name: " + itemName);
+        Debug.Log("ID: " + id + " Item Name: " + itemName);
         switch(storeOpen)
         {
             case StoreOpen.SKIN:
@@ -240,7 +242,7 @@ public class StoreManager : MonoBehaviour
                         database.skins[id].haveIt = true;
                         UIManager.UpdateTextButtons("Click to use", skinsList[id]);
                     }else{
-                        print("ERROR: Not enough diamonds - " + database.diamonds + " diamonds x " + database.skins[id].price.ToString() + " cost");
+                        Debug.Log("ERROR: Not enough diamonds - " + database.diamonds + " diamonds x " + database.skins[id].price + " cost");
                     }
                     
                 }
@@ -255,7 +257,7 @@ public class StoreManager : MonoBehaviour
                         database.potions[id].quantity += 1;
                     }else
                     {
-                        print("ERROR: Not enough diamonds - " + database.diamonds + " diamonds x " + database.potions[id].price.ToString() + " cost");
+                        Debug.Log("ERROR: Not enough diamonds - " + database.diamonds + " diamonds x " + database.potions[id].price + " cost");
                     }
                     
                 }
@@ -273,14 +275,21 @@ public class StoreManager : MonoBehaviour
                 }
                 else
                 {
-                    if(database.diamonds - database.smith[id].price >= 0)
+                    if(database.rubys - database.smith[id].price >= 0)
                     {
-                        database.diamonds -= database.smith[id].price;
+                        database.rubys -= database.smith[id].price;
                         database.smith[id].haveIt = true;
                         UIManager.UpdateTextButtons("Click to use", smithList[id]);
                     }else{
-                        print("ERROR: Not enough diamonds - " + database.diamonds + " diamonds x " + database.smith[id].price.ToString() + " cost");
+                        Debug.Log("ERROR: Not enough rubys - " + database.rubys + " rubys x " + database.smith[id].price + " cost");
                     }
+                }
+                break;
+
+            case StoreOpen.BANK:
+                if(database.bank[id] != null)
+                {
+                    database.diamonds += bankAPI.BuyFromTheBank(database.bank[id].nameItem, database.bank[id].price, database.bank[id].value);
                 }
                 break;
 

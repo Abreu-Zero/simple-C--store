@@ -8,7 +8,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 public class DatabaseStore : MonoBehaviour
 {
 
-    public List<ItemModel> bank;
+    public List<BankModel> bank;
     public List<EquipModel> skins, smith;
     public List<PotionModel> potions;
     public int diamonds, rubys;
@@ -50,9 +50,9 @@ public class DatabaseStore : MonoBehaviour
         smith.Add(armor);
         armor = new EquipModel (1, 500, "StevePigface", false, false);
         smith.Add(armor);
-        ItemModel coin = new ItemModel(0, 0, "item (3)"); //TODO: set new sprites for bank items  
+        BankModel coin = new BankModel(0, 0, "item (3)", 500); //TODO: set new sprites for bank items  
         bank.Add(coin);
-        coin = new ItemModel(1, 0, "chest");
+        coin = new BankModel(1, 0, "chest", 1000);
         bank.Add(coin);
     }
 

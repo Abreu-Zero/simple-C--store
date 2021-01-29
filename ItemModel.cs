@@ -45,12 +45,25 @@ using UnityEngine.UI;
     }
 }
 
+[System.Serializable] public class BankModel: ItemModel
+{
+    public int value;
+
+    public BankModel(int id, int price, string name, int value) : base(id, price, name)
+    {
+        this.id = id;
+        this.price = price;
+        this.nameItem = name;
+        this.value = value;
+    }
+}
+
 [System.Serializable] public class DatabaseItems
 {
     public List<EquipModel> dataSkins;
     public List<PotionModel> dataPotions;
     public List<EquipModel> dataSmith;
-    public List<ItemModel> dataBank;
+    public List<BankModel> dataBank;
 }
 
 [System.Serializable] public class DataGems

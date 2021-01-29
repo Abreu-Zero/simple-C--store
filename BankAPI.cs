@@ -5,19 +5,23 @@ using UnityEngine;
 public class BankAPI : MonoBehaviour
 {
 
-    private bool isLogged = false;
+    private UserKong mockUser;
 
     public int BuyFromTheBank(string itemName, int itemPrice, int itemValue)
     {
-        if(isLogged)
+        mockUser = new UserKong();
+
+        if(mockUser.isLogged)
         {
-            if(APIManager.user.coins - itemPrice >= 0)
+            if(APIManager.instance.RemoveCoins(itemPrice, mockUser.id))
             {
-                APIManager.RemoveCoins(itemPrice);
+                Debug.Log("Purchase successful, adding " + itemValue + "diamonds to account");
                 return itemValue;
             }
         }
 
+        Debug.Log("Purchase Failed");
         return 0;
     }
+
 }
