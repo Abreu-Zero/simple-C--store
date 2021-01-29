@@ -17,10 +17,13 @@ public class BankAPI : MonoBehaviour
             {
                 Debug.Log("Purchase successful, adding " + itemValue + "diamonds to account");
                 return itemValue;
+            }else
+            {
+                Debug.Log("Purchase failed, user did not have the required amount");
             }
         }
 
-        Debug.Log("Purchase Failed");
+        Debug.Log("Purchase Failed, could not retrieve user data");
         return 0;
     }
 
