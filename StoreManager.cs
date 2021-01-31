@@ -14,6 +14,7 @@ public class StoreManager : MonoBehaviour
     private UIStoreManager UIManager;
     private DatabaseStore database;
     private BankAPI bankAPI;
+    private bool IsLoggedIn = false;
     private List<GameObject> skinsList, potionsList, smithList, bankList;
     private List<List<GameObject>> odin;
     
@@ -41,19 +42,26 @@ public class StoreManager : MonoBehaviour
     void Start()
     {
         storeContent = GameObject.Find("PanelContent").GetComponent<Transform>();
+
         skinsList = new List<GameObject>();
         potionsList = new List<GameObject>();
         smithList = new List<GameObject>();
         bankList = new List<GameObject>();
         odin = new List<List<GameObject>>();
+
         odin.Add(skinsList);
         odin.Add(potionsList);
         odin.Add(smithList);
         odin.Add(bankList);
+
         UIManager = GetComponent<UIStoreManager>();
         database = GetComponent<DatabaseStore>();
         bankAPI = GetComponent<BankAPI>();
+
+        IsLoggedIn = APIManager.instance.IsLoggedIn;
+
         ChangeStore(0);
+        UIManager.UpdateBankButton(IsLoggedIn);
         UIManager.UpdateInventory(GetUsedSkin(), GetUsedArmor());
         UIManager.UpdatePotions(database.potions[0].quantity, database.potions[1].quantity);
         UIManager.UpdateGems(database.diamonds, database.rubys);
@@ -212,6 +220,11 @@ public class StoreManager : MonoBehaviour
             default:
                 return false;
         }
+    }
+
+    public List<BankModel> CheckBank()
+    {
+        return bankAPI.CheckBank();
     }
 
     private string GetUsedSkin()

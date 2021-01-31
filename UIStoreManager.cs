@@ -8,6 +8,7 @@ public class UIStoreManager : MonoBehaviour
     
     private Text diamondsText, rubysText, greenText, redText;
     private Image armorImage, skinImage;
+    private Button bankButton;
     public UIStoreManager instance;
 
     private void Awake()
@@ -30,6 +31,7 @@ public class UIStoreManager : MonoBehaviour
         redText = GameObject.Find("ImagePotionRed").GetComponentInChildren<Text>();
         skinImage = GameObject.Find("InvSkinImg").GetComponent<Image>();
         armorImage = GameObject.Find("InvEquipImg").GetComponent<Image>();
+        bankButton = GameObject.Find("ButtonBank").GetComponent<Button>();
     }
 
     public void UpdateGems(int diamonds, int rubys){
@@ -40,6 +42,11 @@ public class UIStoreManager : MonoBehaviour
     public void UpdatePotions(int green, int red){
         greenText.text = green.ToString();    
         redText.text = red.ToString();
+    }
+
+    public void UpdateBankButton(bool choice)
+    {
+        bankButton.interactable = choice;
     }
 
     public void UpdateTextButtons(string toUpdate, GameObject baseItem)

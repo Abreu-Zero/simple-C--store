@@ -28,6 +28,12 @@ public class DatabaseStore : MonoBehaviour
         }
     }
 
+    void Start()
+    {
+        bank = BankAPI.instance.CheckBank();
+        Debug.Log("Bank Count: " + bank.Count);
+    }
+
     private void PopulateStore()
     {
         EquipModel skin = new EquipModel(0, 0, "SteveRed", true, true);
@@ -50,10 +56,11 @@ public class DatabaseStore : MonoBehaviour
         smith.Add(armor);
         armor = new EquipModel (1, 500, "StevePigface", false, false);
         smith.Add(armor);
-        BankModel coin = new BankModel(0, 0, "item (3)", 500); //TODO: set new sprites for bank items  
-        bank.Add(coin);
-        coin = new BankModel(1, 0, "chest", 1000);
-        bank.Add(coin);
+        
+        // BankModel coin = new BankModel(0, 0, "item (3)", 500); //TODO: set new sprites for bank items  
+        // bank.Add(coin);
+        // coin = new BankModel(1, 0, "chest", 1000);
+        // bank.Add(coin);
     }
 
     public string CheckItemBought(int id, List<EquipModel> list) 
@@ -100,7 +107,6 @@ public class DatabaseStore : MonoBehaviour
         data.dataSkins = skins;
         data.dataPotions = potions;
         data.dataSmith = smith;
-        data.dataBank = bank;
 
         bFormatter.Serialize(fStream, data);
         fStream.Close();
@@ -124,7 +130,6 @@ public class DatabaseStore : MonoBehaviour
             skins = data.dataSkins;
             potions = data.dataPotions;
             smith = data.dataSmith;
-            bank = data.dataBank;
 
             fStream.Close();
 

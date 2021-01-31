@@ -6,13 +6,11 @@ using UnityEngine.UI;
 [System.Serializable] public class ItemModel
 {
     public int id;
-    public int price;
     public string nameItem;
 
-    public ItemModel(int id, int price, string name)
+    public ItemModel(int id, string name)
     {
         this.id = id;
-        this.price = price;
         this.nameItem = name;
     }
 }
@@ -20,8 +18,9 @@ using UnityEngine.UI;
 [System.Serializable] public class PotionModel: ItemModel
 {
     public int quantity;
+    public int price;
 
-    public PotionModel(int id, int price, string name, int quantity) : base(id, price, name)
+    public PotionModel(int id, int price, string name, int quantity) : base(id, name)
     {
         this.id = id;
         this.price = price;
@@ -34,8 +33,9 @@ using UnityEngine.UI;
 {
     public bool haveIt;
     public bool isEquiped;
+    public int price;
 
-    public EquipModel(int id, int price, string name, bool haveIt, bool isEquiped) : base(id, price, name)
+    public EquipModel(int id, int price, string name, bool haveIt, bool isEquiped) : base(id, name)
     {
         this.id = id;
         this.price = price;
@@ -47,9 +47,10 @@ using UnityEngine.UI;
 
 [System.Serializable] public class BankModel: ItemModel
 {
+    public string price;
     public int value;
 
-    public BankModel(int id, int price, string name, int value) : base(id, price, name)
+    public BankModel(int id, string price, string name, int value) : base(id, name)
     {
         this.id = id;
         this.price = price;

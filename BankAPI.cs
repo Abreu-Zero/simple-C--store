@@ -6,14 +6,33 @@ public class BankAPI : MonoBehaviour
 {
 
     private UserKong mockUser;
+    public static BankAPI instance;
 
-    public int BuyFromTheBank(string itemName, int itemPrice, int itemValue)
+    public void Awake() {
+        if(instance == null) {
+            instance = this;
+        } else if(instance != this) {
+            Destroy(gameObject);
+        }
+    }
+
+    public List<BankModel> CheckBank()
+    {
+        if(APIManager.instance.IsLoggedIn)
+        {
+            return APIManager.instance.FBBank;
+        }
+        return new List<BankModel>();
+        
+    }
+
+    public int BuyFromTheBank(string itemName, string itemPrice, int itemValue)
     {
         mockUser = new UserKong();
 
         if(mockUser.isLogged)
         {
-            if(APIManager.instance.RemoveCoins(itemPrice, mockUser.id))
+            if(APIManager.instance.BuyDiamonds(itemPrice, mockUser.id))
             {
                 Debug.Log("Purchase successful, adding " + itemValue + "diamonds to account");
                 return itemValue;
