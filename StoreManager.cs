@@ -302,7 +302,7 @@ public class StoreManager : MonoBehaviour
             case StoreOpen.BANK:
                 if(database.bank[id] != null)
                 {
-                    database.diamonds += bankAPI.BuyFromTheBank(database.bank[id].nameItem, database.bank[id].price, database.bank[id].value);
+                    database.diamonds += bankAPI.BuyFromTheBank(database.bank[id].nameItem, database.bank[id].value);
                 }
                 break;
 

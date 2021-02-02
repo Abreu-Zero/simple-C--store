@@ -5,8 +5,8 @@ using UnityEngine;
 public class BankAPI : MonoBehaviour
 {
 
-    private UserKong mockUser;
     public static BankAPI instance;
+    private int currentValue;
 
     public void Awake() {
         if(instance == null) {
@@ -26,24 +26,15 @@ public class BankAPI : MonoBehaviour
         
     }
 
-    public int BuyFromTheBank(string itemName, string itemPrice, int itemValue)
+    public int BuyFromTheBank(string itemName, int itemValue)
     {
-        mockUser = new UserKong();
+        APIManager.instance.BuyDiamonds(itemName, itemValue);
+        return currentValue;
+    }
 
-        if(mockUser.isLogged)
-        {
-            if(APIManager.instance.BuyDiamonds(itemPrice, mockUser.id))
-            {
-                Debug.Log("Purchase successful, adding " + itemValue + "diamonds to account");
-                return itemValue;
-            }else
-            {
-                Debug.Log("Purchase failed, user did not have the required amount");
-            }
-        }
-
-        Debug.Log("Purchase Failed, could not retrieve user data");
-        return 0;
+    public void HandlePurchase(int value)
+    {
+        currentValue = value;
     }
 
 }
