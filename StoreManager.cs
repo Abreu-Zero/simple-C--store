@@ -12,7 +12,6 @@ public class StoreManager : MonoBehaviour
     public GameObject baseItem;
     private StoreOpen storeOpen;
     private UIStoreManager UIManager;
-    private DatabaseStore database;
     private BankAPI bankAPI;
     private bool IsLoggedIn = false;
     private List<GameObject> skinsList, potionsList, smithList, bankList;
@@ -55,28 +54,28 @@ public class StoreManager : MonoBehaviour
         odin.Add(bankList);
 
         UIManager = GetComponent<UIStoreManager>();
-        database = GetComponent<DatabaseStore>();
         bankAPI = GetComponent<BankAPI>();
+        DatabaseStore.instance.CheckBank();
 
         IsLoggedIn = APIManager.instance.IsLoggedIn;
 
         ChangeStore(0);
         UIManager.UpdateBankButton(IsLoggedIn);
         UIManager.UpdateInventory(GetUsedSkin(), GetUsedArmor());
-        UIManager.UpdatePotions(database.potions[0].quantity, database.potions[1].quantity);
-        UIManager.UpdateGems(database.diamonds, database.rubys);
+        UIManager.UpdatePotions(DatabaseStore.instance.potions[0].quantity, DatabaseStore.instance.potions[1].quantity);
+        UIManager.UpdateGems(DatabaseStore.instance.diamonds, DatabaseStore.instance.rubys);
     }
 
     void Update(){
         if(Input.GetKeyDown(KeyCode.Space)) //FOR TESTING ONLY
         {
-            database.diamonds += 100;
-            database.rubys += 100;
-            UIManager.UpdateGems(database.diamonds, database.rubys);
+            DatabaseStore.instance.diamonds += 100;
+            DatabaseStore.instance.rubys += 100;
+            UIManager.UpdateGems(DatabaseStore.instance.diamonds, DatabaseStore.instance.rubys);
         }
         if(Input.GetKeyDown(KeyCode.D))
         {
-            database.DeleteData();
+            DatabaseStore.instance.DeleteData();
         }
     }
 
@@ -100,12 +99,12 @@ public class StoreManager : MonoBehaviour
                 if(storeOpen != StoreOpen.SKIN){
                     if( skinsList.Count == 0)
                     {
-                        foreach (var item in database.skins)
+                        foreach (var item in DatabaseStore.instance.skins)
                         {
                             GameObject skin = Instantiate(baseItem) as GameObject;
                             skin.transform.SetParent(storeContent, false);
                             Text price = skin.GetComponentInChildren<Text>();
-                            price.text = database.CheckItemBought(item.id, database.skins);
+                            price.text = DatabaseStore.instance.CheckItemBought(item.id, DatabaseStore.instance.skins);
                             skin.GetComponentInChildren<Image>().sprite = Resources.Load<Sprite>("Sprites/Steve/Skins/"+ item.nameItem);
                             skin.GetComponentInChildren<Button>().onClick.AddListener(() => BuyItem(item.id, item.nameItem));
                             skinsList.Add(skin);
@@ -126,7 +125,7 @@ public class StoreManager : MonoBehaviour
                 if(storeOpen != StoreOpen.POTION){
                     if(potionsList.Count == 0)
                     {
-                        foreach (var item in database.potions)
+                        foreach (var item in DatabaseStore.instance.potions)
                         {
                             GameObject skin = Instantiate(baseItem) as GameObject;
                             skin.transform.SetParent(storeContent, false);
@@ -151,12 +150,12 @@ public class StoreManager : MonoBehaviour
                 if(storeOpen != StoreOpen.ARMOR){
                     if(smithList.Count == 0)
                     {
-                        foreach (var item in database.smith)
+                        foreach (var item in DatabaseStore.instance.smith)
                         {
                             GameObject skin = Instantiate(baseItem) as GameObject;
                             skin.transform.SetParent(storeContent, false);
                             Text price = skin.GetComponentInChildren<Text>();
-                            price.text = database.CheckItemBought(item.id, database.smith);
+                            price.text = DatabaseStore.instance.CheckItemBought(item.id, DatabaseStore.instance.smith);
                             skin.GetComponentInChildren<Image>().sprite = Resources.Load<Sprite>("Sprites/Steve/Equips/"+ item.nameItem);
                             skin.GetComponentInChildren<Button>().onClick.AddListener(() => BuyItem(item.id, item.nameItem));
                             smithList.Add(skin);                       
@@ -176,7 +175,7 @@ public class StoreManager : MonoBehaviour
                 if(storeOpen != StoreOpen.BANK){
                     if(bankList.Count == 0)
                     {
-                        foreach (var item in database.bank)
+                        foreach (var item in DatabaseStore.instance.bank)
                         {
                             GameObject skin = Instantiate(baseItem) as GameObject;
                             skin.transform.SetParent(storeContent, false);
@@ -229,12 +228,12 @@ public class StoreManager : MonoBehaviour
 
     private string GetUsedSkin()
     {
-        return database.CheckUsedSkin();
+        return DatabaseStore.instance.CheckUsedSkin();
     }
 
     private string GetUsedArmor()
     {
-        return database.CheckUsedArmor();
+        return DatabaseStore.instance.CheckUsedArmor();
     }
 
 
@@ -244,33 +243,33 @@ public class StoreManager : MonoBehaviour
         switch(storeOpen)
         {
             case StoreOpen.SKIN:
-                if(database.skins[id].haveIt){
+                if(DatabaseStore.instance.skins[id].haveIt){
                     EquipItem(id);
                 }
                 else
                 {
-                    if(database.diamonds - database.skins[id].price >= 0)
+                    if(DatabaseStore.instance.diamonds - DatabaseStore.instance.skins[id].price >= 0)
                     {
-                        database.diamonds -= database.skins[id].price;
-                        database.skins[id].haveIt = true;
+                        DatabaseStore.instance.diamonds -= DatabaseStore.instance.skins[id].price;
+                        DatabaseStore.instance.skins[id].haveIt = true;
                         UIManager.UpdateTextButtons("Click to use", skinsList[id]);
                     }else{
-                        Debug.Log("ERROR: Not enough diamonds - " + database.diamonds + " diamonds x " + database.skins[id].price + " cost");
+                        Debug.Log("ERROR: Not enough diamonds - " + DatabaseStore.instance.diamonds + " diamonds x " + DatabaseStore.instance.skins[id].price + " cost");
                     }
                     
                 }
                 break;
 
             case StoreOpen.POTION:
-                if(database.potions[id] != null)
+                if(DatabaseStore.instance.potions[id] != null)
                 {
-                    if(database.diamonds - database.potions[id].price >= 0)
+                    if(DatabaseStore.instance.diamonds - DatabaseStore.instance.potions[id].price >= 0)
                     {
-                        database.diamonds -= database.potions[id].price;
-                        database.potions[id].quantity += 1;
+                        DatabaseStore.instance.diamonds -= DatabaseStore.instance.potions[id].price;
+                        DatabaseStore.instance.potions[id].quantity += 1;
                     }else
                     {
-                        Debug.Log("ERROR: Not enough diamonds - " + database.diamonds + " diamonds x " + database.potions[id].price + " cost");
+                        Debug.Log("ERROR: Not enough diamonds - " + DatabaseStore.instance.diamonds + " diamonds x " + DatabaseStore.instance.potions[id].price + " cost");
                     }
                     
                 }
@@ -278,31 +277,31 @@ public class StoreManager : MonoBehaviour
                 {
                     Debug.Log("Error while updating potions");
                 }
-                print(itemName + ": " + database.potions[id].quantity.ToString());
-                UIManager.UpdatePotions(database.potions[0].quantity,database.potions[1].quantity);
+                print(itemName + ": " + DatabaseStore.instance.potions[id].quantity.ToString());
+                UIManager.UpdatePotions(DatabaseStore.instance.potions[0].quantity,DatabaseStore.instance.potions[1].quantity);
                 break;
             
             case StoreOpen.ARMOR:
-                if(database.smith[id].haveIt){
+                if(DatabaseStore.instance.smith[id].haveIt){
                     EquipItem(id);
                 }
                 else
                 {
-                    if(database.rubys - database.smith[id].price >= 0)
+                    if(DatabaseStore.instance.rubys - DatabaseStore.instance.smith[id].price >= 0)
                     {
-                        database.rubys -= database.smith[id].price;
-                        database.smith[id].haveIt = true;
+                        DatabaseStore.instance.rubys -= DatabaseStore.instance.smith[id].price;
+                        DatabaseStore.instance.smith[id].haveIt = true;
                         UIManager.UpdateTextButtons("Click to use", smithList[id]);
                     }else{
-                        Debug.Log("ERROR: Not enough rubys - " + database.rubys + " rubys x " + database.smith[id].price + " cost");
+                        Debug.Log("ERROR: Not enough rubys - " + DatabaseStore.instance.rubys + " rubys x " + DatabaseStore.instance.smith[id].price + " cost");
                     }
                 }
                 break;
 
             case StoreOpen.BANK:
-                if(database.bank[id] != null)
+                if(DatabaseStore.instance.bank[id] != null)
                 {
-                    database.diamonds += bankAPI.BuyFromTheBank(database.bank[id].nameItem, database.bank[id].value);
+                    DatabaseStore.instance.diamonds += bankAPI.BuyFromTheBank(DatabaseStore.instance.bank[id].nameItem, DatabaseStore.instance.bank[id].value);
                 }
                 break;
 
@@ -310,7 +309,7 @@ public class StoreManager : MonoBehaviour
                 Debug.Log("No store open");
                 break;
             }
-            UIManager.UpdateGems(database.diamonds, database.rubys);
+            UIManager.UpdateGems(DatabaseStore.instance.diamonds, DatabaseStore.instance.rubys);
     }
 
     public void EquipItem(int id)
@@ -318,24 +317,24 @@ public class StoreManager : MonoBehaviour
         switch(storeOpen)
         {
             case StoreOpen.SKIN:
-                foreach(var s in database.skins){
+                foreach(var s in DatabaseStore.instance.skins){
                     if(s.isEquiped){
                         s.isEquiped = false;
                         UIManager.UpdateTextButtons("Click to use", skinsList[s.id]);
                     }
                 }
-                database.skins[id].isEquiped = true;
+                DatabaseStore.instance.skins[id].isEquiped = true;
                 UIManager.UpdateTextButtons("Using", skinsList[id]);
-                PlayerPrefs.SetString("UsedSkin", database.skins[id].nameItem); //TODO: fix this
+                PlayerPrefs.SetString("UsedSkin", DatabaseStore.instance.skins[id].nameItem); //TODO: fix this
                 break;
             case StoreOpen.ARMOR:
-                foreach(var s in database.smith){
+                foreach(var s in DatabaseStore.instance.smith){
                     if(s.isEquiped){
                         s.isEquiped = false;
                         UIManager.UpdateTextButtons("Click to use", smithList[s.id]);
                     }
                 }
-                database.smith[id].isEquiped = true;
+                DatabaseStore.instance.smith[id].isEquiped = true;
                 UIManager.UpdateTextButtons("Using", smithList[id]);
                 break;
             default:
@@ -343,13 +342,13 @@ public class StoreManager : MonoBehaviour
                 break;
 
         }
-        UIManager.UpdateInventory(database.CheckUsedSkin(), database.CheckUsedArmor());
+        UIManager.UpdateInventory(DatabaseStore.instance.CheckUsedSkin(), DatabaseStore.instance.CheckUsedArmor());
     }
 
     public void ReturnToMainMenu()
     {
         //TODO: encapsulate this into overseer maybe?
-        database.SaveData();
+        DatabaseStore.instance.SaveData();
         SceneManager.LoadScene("MainMenu");
 
     }

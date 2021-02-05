@@ -12,10 +12,22 @@ public class DatabaseStore : MonoBehaviour
     public List<EquipModel> skins, smith;
     public List<PotionModel> potions;
     public int diamonds, rubys;
+    public static DatabaseStore instance;
+
+    private void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
 
     void OnEnable()
     {
-        //DeleteData();
         if(!LoadData())
         {
             PopulateStore();
@@ -26,12 +38,6 @@ public class DatabaseStore : MonoBehaviour
             diamonds = 0;
             rubys = 0;
         }
-    }
-
-    void Start()
-    {
-        bank = BankAPI.instance.CheckBank();
-        Debug.Log("Bank Count: " + bank.Count);
     }
 
     private void PopulateStore()
@@ -96,6 +102,11 @@ public class DatabaseStore : MonoBehaviour
             if (s.isEquiped){return s.nameItem;}
         }
         return "";
+    }
+
+    public void CheckBank()
+    {
+        bank = BankAPI.instance.CheckBank();
     }
 
     public void SaveData()
@@ -163,10 +174,12 @@ public class DatabaseStore : MonoBehaviour
         try
         {
             File.Delete(Application.persistentDataPath + "storeData.data");
+            File.Delete(Application.persistentDataPath + "scoreData.data");
         }
         catch (Exception ex)
         {
             Debug.LogException(ex);
         }
-    }
+    }  
+
 }

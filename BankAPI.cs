@@ -18,11 +18,13 @@ public class BankAPI : MonoBehaviour
 
     public List<BankModel> CheckBank()
     {
-        if(APIManager.instance.IsLoggedIn)
-        {
-            return APIManager.instance.FBBank;
-        }
-        return new List<BankModel>();
+
+        return APIManager.instance.FBBank;
+        // if(APIManager.instance.IsLoggedIn)
+        // {
+        //     return APIManager.instance.FBBank;
+        // }
+        // return new List<BankModel>();
         
     }
 
