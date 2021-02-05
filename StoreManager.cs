@@ -221,9 +221,9 @@ public class StoreManager : MonoBehaviour
         }
     }
 
-    public List<BankModel> CheckBank()
+    public void UpdateUIGems()
     {
-        return bankAPI.CheckBank();
+        UIManager.UpdateGems(DatabaseStore.instance.diamonds, DatabaseStore.instance.rubys);
     }
 
     private string GetUsedSkin()
@@ -301,7 +301,7 @@ public class StoreManager : MonoBehaviour
             case StoreOpen.BANK:
                 if(DatabaseStore.instance.bank[id] != null)
                 {
-                    DatabaseStore.instance.diamonds += bankAPI.BuyFromTheBank(DatabaseStore.instance.bank[id].nameItem, DatabaseStore.instance.bank[id].value);
+                    bankAPI.BuyFromTheBank(DatabaseStore.instance.bank[id].nameItem, DatabaseStore.instance.bank[id].value);
                 }
                 break;
 
@@ -309,7 +309,7 @@ public class StoreManager : MonoBehaviour
                 Debug.Log("No store open");
                 break;
             }
-            UIManager.UpdateGems(DatabaseStore.instance.diamonds, DatabaseStore.instance.rubys);
+            UpdateUIGems();
     }
 
     public void EquipItem(int id)

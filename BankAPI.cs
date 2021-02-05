@@ -6,7 +6,6 @@ public class BankAPI : MonoBehaviour
 {
 
     public static BankAPI instance;
-    private int currentValue;
 
     public void Awake() {
         if(instance == null) {
@@ -18,25 +17,18 @@ public class BankAPI : MonoBehaviour
 
     public List<BankModel> CheckBank()
     {
-
-        return APIManager.instance.FBBank;
-        // if(APIManager.instance.IsLoggedIn)
-        // {
-        //     return APIManager.instance.FBBank;
-        // }
-        // return new List<BankModel>();
-        
+        return APIManager.instance.FBBank;        
     }
 
-    public int BuyFromTheBank(string itemName, int itemValue)
+    public void BuyFromTheBank(string itemName, int itemValue)
     {
         APIManager.instance.BuyDiamonds(itemName, itemValue);
-        return currentValue;
     }
 
     public void HandlePurchase(int value)
     {
-        currentValue = value;
+        DatabaseStore.instance.diamonds += value;
+        StoreManager.instance.UpdateUIGems();
     }
 
 }
