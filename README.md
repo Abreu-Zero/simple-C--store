@@ -1,6 +1,6 @@
 # simple-CSharp-store
 
-##logic for a C# Unity game with in-game items and purchases via Facebook SDK
+logic for a C# Unity game with in-game items and purchases via Facebook SDK
 
 So basically what is happening here is a store populated via a small database and updating the UI accordingly with the users choice
 So we have different sections for skins, potions, armors and one to purchase in-game currency (diamonds)
